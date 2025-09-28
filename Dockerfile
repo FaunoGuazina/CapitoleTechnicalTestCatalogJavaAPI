@@ -11,7 +11,8 @@ RUN mvn -B -q -DskipTests clean package
 FROM public.ecr.aws/docker/library/eclipse-temurin:21-jre
 WORKDIR /app
 RUN useradd -ms /bin/bash appuser
+COPY --from=build /workspace/target/*-SNAPSHOT.jar /app/app.jar
+RUN chown -R appuser:appuser /app
 USER appuser
-COPY --from=build /workspace/build/libs/*-SNAPSHOT.jar app.jar
 EXPOSE 8080
 ENTRYPOINT ["java","-jar","/app/app.jar"]
