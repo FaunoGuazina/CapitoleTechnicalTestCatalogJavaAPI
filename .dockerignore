@@ -1,0 +1,26 @@
+# Build de Gradle
+/build
+/.gradle
+.gradle/
+/out
+
+# Archivos temporales del wrapper
+/gradle/wrapper/gradle-wrapper.jar
+
+# Archivos de IDE
+.idea
+*.iml
+.vscode
+
+# Logs y temporales
+*.log
+*.tmp
+*.swp
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Git
+.git
+.gitignore

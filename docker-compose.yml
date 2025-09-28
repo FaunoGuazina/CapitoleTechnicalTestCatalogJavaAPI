@@ -1,0 +1,31 @@
+services:
+  mongo:
+    image: public.ecr.aws/docker/library/mongo:7.0
+    container_name: catalog-mongo
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: catalog
+    tmpfs:
+      - /data/db
+    healthcheck:
+      test: [ "CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok" ]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+
+  api:
+    build:
+      context: .
+      no_cache: true
+      pull: true
+    container_name: catalog-api
+    depends_on:
+      mongo:
+        condition: service_healthy
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://mongo:27017/catalog
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8080:8080"
