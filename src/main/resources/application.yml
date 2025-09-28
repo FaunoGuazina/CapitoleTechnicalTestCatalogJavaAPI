@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: CapitoleTechnicalTestCatalogAPI
+  data:
+    mongodb:
+      uri: ${SPRING_DATA_MONGODB_URI:mongodb://localhost:27017/catalog}
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+springdoc:
+  swagger-ui:
+    path: /api-docs.html
