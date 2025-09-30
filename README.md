@@ -13,7 +13,7 @@ REST API for product catalog with **category filter**,
     - Optional filter `category`
     - Pagination `page` and `size`
     - Sorting by `sku`, `price`, `description`, `category`
-- Discounts applied by:
+- Discounts applied by `DiscountEngine` with YAML-configurable rules:
     - Category `Electronics` → 15%
     - Category `Home & Kitchen` → 25%
     - SKU ending in `5` → 30%
@@ -45,7 +45,7 @@ REST API for product catalog with **category filter**,
   `PagedModel<EntityModel<ProductResponse>>`\
 - Use case: `ListProductsUseCase` applies discount and calculates
   `discountedPrice`\
-- Policy: `DiscountPolicy.calculate(category, sku)`\
+- Policy: `DiscountEngine` loads rules from `application.yml`\
 - Persistence: `ProductRepository` with
   `findByCategoryContainingIgnoreCase(...)`\
 - Mongo conversion Decimal128↔BigDecimal: `MongoConfig`\
