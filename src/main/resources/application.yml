@@ -17,3 +17,15 @@ management:
 springdoc:
   swagger-ui:
     path: /api-docs.html
+
+discounts:
+  rules:
+    - type: category
+      match: "Electronics"
+      pct: 15
+    - type: category
+      match: "Home & Kitchen"
+      pct: 25
+    - type: skuSuffix
+      match: "5"
+      pct: 30

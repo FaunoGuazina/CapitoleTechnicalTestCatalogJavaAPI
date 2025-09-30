@@ -9,13 +9,14 @@ import com.capitole.technicaltest.catalog.adapters.outbound.model.catalog.entity
 import com.capitole.technicaltest.catalog.adapters.outbound.model.catalog.repository.ProductRepository;
 import com.capitole.technicaltest.catalog.domain.mapper.ProductModelMapper;
 import com.capitole.technicaltest.catalog.domain.model.ProductModel;
+import com.capitole.technicaltest.catalog.domain.policy.DiscountEngine;
+import com.capitole.technicaltest.catalog.domain.policy.DiscountSettings;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
@@ -25,10 +26,21 @@ import org.springframework.data.domain.Pageable;
 class ListProductsUseCaseTest {
   @Mock private ProductRepository repository;
   @Mock private ProductModelMapper mapper;
-  @InjectMocks private ListProductsUseCase useCase;
+  private ListProductsUseCase useCase;
 
   @BeforeEach
   void setupMapper() {
+
+    DiscountSettings settings =
+        new DiscountSettings(
+            List.of(
+                new DiscountSettings.Rule("category", "Electronics", 15),
+                new DiscountSettings.Rule("category", "Home & Kitchen", 25),
+                new DiscountSettings.Rule("skuSuffix", "5", 30)));
+    DiscountEngine discountEngine = new DiscountEngine(settings);
+
+    useCase = new ListProductsUseCase(repository, mapper, discountEngine);
+
     given(mapper.toProductModel(any()))
         .willAnswer(
             inv -> {
@@ -51,6 +63,7 @@ class ListProductsUseCaseTest {
             new Product(null, "SKU005", new BigDecimal("50.00"), "Mouse", "Electronics"));
     PageImpl<Product> page = new PageImpl<>(products);
     given(repository.findAll(Pageable.unpaged())).willReturn(page);
+
     // When
     var result = useCase.findAll(null, Pageable.unpaged());
 

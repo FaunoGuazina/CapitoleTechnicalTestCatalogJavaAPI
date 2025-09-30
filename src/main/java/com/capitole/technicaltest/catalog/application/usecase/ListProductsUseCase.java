@@ -3,7 +3,7 @@ package com.capitole.technicaltest.catalog.application.usecase;
 import com.capitole.technicaltest.catalog.adapters.outbound.model.catalog.repository.ProductRepository;
 import com.capitole.technicaltest.catalog.domain.mapper.ProductModelMapper;
 import com.capitole.technicaltest.catalog.domain.model.ProductModel;
-import com.capitole.technicaltest.catalog.domain.policy.DiscountPolicy;
+import com.capitole.technicaltest.catalog.domain.policy.DiscountEngine;
 import com.capitole.technicaltest.catalog.domain.ports.ProductModelRepository;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 public class ListProductsUseCase implements ProductModelRepository {
   private final ProductRepository productRepository;
   private final ProductModelMapper mapper;
+  private final DiscountEngine discountEngine;
 
   @Override
   public Page<ProductModel> findAll(String category, Pageable pageable) {
@@ -28,7 +29,7 @@ public class ListProductsUseCase implements ProductModelRepository {
         .map(mapper::toProductModel)
         .map(
             p -> {
-              final int discount = DiscountPolicy.calculate(p.category(), p.sku());
+              final int discount = discountEngine.calculate(p);
               return p.toBuilder()
                   .discountApplied(discount)
                   .discountedPrice(applyDiscount(p.price(), discount))
